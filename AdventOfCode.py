@@ -75,6 +75,7 @@ def d2one():
 def d2two():
     t = 0
     l = []
+    n = 0
     with open("inputd2.txt") as f:
         linesr = f.readlines()
     ranges = linesr[0]
@@ -95,15 +96,13 @@ def d2two():
                 first_half = str(i)[:l]
                 second_half = str(i)[l:]
                 if first_half == second_half:
-                    n += 1
                     t += i
             ## pour un nombre n de répétitions
             else:
-                for r in range(max( len(first), len(second)) + 1):
+                for r in range(1, len(str(i))):
                     if len(str(i)) % r == 0:
-                        rep = len(str(i)) // r
-                        if str(i) == str(i)[:r] * rep:
-                            n += 1
+                        rep = str(i)[:r]
+                        if str(i) == rep * (len(str(i)) // r):
                             t += i
 
     return t
