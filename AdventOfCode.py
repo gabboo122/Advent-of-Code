@@ -80,10 +80,16 @@ def d2two():
         linesr = f.readlines()
     ranges = linesr[0]
     rangesl = []
-    while "," in ranges:
-        first, _, rest = ranges.partition(",")
-        rangesl.append(first)
-        ranges = rest
+
+    rangesc = ranges.count(",")
+    if rangesc == 0:
+        rangesl.append(ranges)
+    elif not rangesc == 0:
+        while "," in ranges:
+            first, _, rest = ranges.partition(",")
+            rangesl.append(first)
+            ranges = rest
+        rangesl.append(ranges)
 
     for rangen in rangesl:
         first, _, second = rangen.partition("-")
@@ -91,18 +97,192 @@ def d2two():
         sID = int(second)
         
         for i in range(fID, sID + 1):
-            if len(str(i)) % 2 == 0:
-                l = len(str(i)) // 2
-                first_half = str(i)[:l]
-                second_half = str(i)[l:]
+            if len(str(i)) == 2:
+                first_half = str(i)[:1]
+                second_half = str(i)[1:]
                 if first_half == second_half:
                     t += i
-            ## pour un nombre n de répétitions
+            
             else:
-                for r in range(1, len(str(i))):
+                for r in range(2, len(str(i)) + 1):
                     if len(str(i)) % r == 0:
-                        rep = str(i)[:r]
-                        if str(i) == rep * (len(str(i)) // r):
+                        l = len(str(i)) // r
+                        rep = str(i)[:l]
+                        if str(i) == str(rep * r):
                             t += i
+                            break
 
     return t
+
+def d3one():
+    with open("inputd3.txt") as f:
+        powerbanks = f.readlines()
+    
+    total = 0
+
+    for bank in powerbanks:
+        fd = 0
+        sd = 0
+        fi = 0
+        power = 0
+        bankl = []
+        for i in range(len(str(bank))):
+            bankl.append(str(bank[i]))
+        print(bankl)
+        bankl.pop()
+
+        for i in range(len(bankl)):
+            bankl[i] = int(bankl[i])
+
+        for i in range(len(bankl)):
+            if bankl[i] > fd and not i == len(bankl):
+                fd = bankl[i]
+                fi = i
+        
+        for i in range(len(bankl)):
+            if bankl[i] > sd and not i <= fi:
+                sd = bankl[i]
+        if sd == 0:
+            sd = fd
+            fd = 0
+            for i in range(len(bankl) -1):
+                if bankl[i] > fd and not i == len(bankl):
+                    fd = bankl[i]
+        power = 10*fd + sd
+        total += power
+        print(power)
+    return total
+
+def best_k_digits(bank_str: str, k: int = 12) -> int:
+    digits = [int(ch) for ch in bank_str.strip() if ch.isdigit()]
+    n = len(digits)
+    to_remove = n - k
+    stack = []
+
+    for d in digits:
+        while to_remove > 0 and stack and stack[-1] < d:
+            stack.pop()
+            to_remove -= 1
+        stack.append(d)
+
+    stack = stack[:k]
+    return int(''.join(str(d) for d in stack))
+
+def d3two():
+    total = 0
+    with open("inputd3.txt") as f:
+        for line in f:
+            total += best_k_digits(line, 12)
+    return total
+
+def d4one():
+    DIRS = [(-1,-1), (-1,0), (-1,1),
+        ( 0,-1),         ( 0,1),
+        ( 1,-1), ( 1,0), ( 1,1)]
+    with open("inputd4.txt") as f:
+        grid = [line.rstrip('\n') for line in f]
+
+    rows, cols = len(grid), len(grid[0])
+    total = 0
+
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] != '@':
+                continue
+            neighbors = 0
+            for dr, dc in DIRS:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == '@':
+                    neighbors += 1
+            if neighbors < 4:
+                total += 1
+
+    return total
+
+def d4two():
+    DIRS = [(-1,-1), (-1,0), (-1,1),
+        ( 0,-1),         ( 0,1),
+        ( 1,-1), ( 1,0), ( 1,1)]
+    with open("inputd4.txt") as f:
+        grid = [list(line.rstrip('\n')) for line in f]
+
+    rows, cols = len(grid), len(grid[0])
+    total_removed = 0
+
+    while True:
+        to_remove = []
+
+        for r in range(rows):
+            for c in range(cols):
+                if grid[r][c] != '@':
+                    continue
+                neighbors = 0
+                for dr, dc in DIRS:
+                    nr, nc = r + dr, c + dc
+                    if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == '@':
+                        neighbors += 1
+                if neighbors < 4:
+                    to_remove.append((r, c))
+
+        if not to_remove:
+            break 
+
+        for r, c in to_remove:
+            grid[r][c] = '.'
+
+        total_removed += len(to_remove)
+
+    return total_removed
+
+def d5one():
+    with open("inputd5.txt") as f:
+        lines = [line.strip() for line in f]
+
+    blank_idx = lines.index("")
+    range_lines = lines[:blank_idx]
+    id_lines = lines[blank_idx+1:]
+
+    ranges = []
+    for line in range_lines:
+        a, b = line.split("-")
+        ranges.append((int(a), int(b)))
+
+    ranges.sort()
+
+    fresh_count = 0
+    for line in id_lines:
+        if not line:
+            continue
+        x = int(line)
+        for lo, hi in ranges:
+            if lo <= x <= hi:
+                fresh_count += 1
+                break
+
+    return fresh_count
+
+def d5two():
+    with open("inputd5.txt") as f:
+        lines = [line.strip() for line in f]
+
+    ranges = []
+    for line in lines:
+        if line == "":
+            break
+        a, b = line.split("-")
+        ranges.append((int(a), int(b)))
+
+    ranges.sort()
+
+    merged = []
+    for s, e in ranges:
+        if not merged or s > merged[-1][1] + 1:
+            merged.append([s, e])
+        else:
+            merged[-1][1] = max(merged[-1][1], e)
+
+    total = 0
+    for s, e in merged:
+        total += e - s + 1
+
+    return total
