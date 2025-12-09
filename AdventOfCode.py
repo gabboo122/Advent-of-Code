@@ -106,3 +106,23 @@ def d2two():
                             t += i
 
     return t
+
+
+
+
+def d7one():
+    with open("inputd7.txt") as f:
+        pathlines = f.readlines()
+    
+    l = 0
+    lv = 0
+    for i in range(len(pathlines-1)):
+        line = pathlines[i].strip()
+        if i == 0:
+            l = len(line)
+            lv = len(line)
+        else:
+            l = len(line)
+            if l != lv:
+                return i
+    return("True")
