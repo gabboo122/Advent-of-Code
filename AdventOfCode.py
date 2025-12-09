@@ -294,7 +294,7 @@ def d7one():
     
     l = 0
     lv = 0
-    for i in range(len(pathlines-1)):
+    for i in range(len(pathlines)-1):
         line = pathlines[i].strip()
         if i == 0:
             l = len(line)
@@ -303,5 +303,28 @@ def d7one():
             l = len(line)
             if l != lv:
                 return i
-    return("True")
+    tlist = []
+    tcount = 0
+    for l in range(len(pathlines)-1):
+        pathlines[l] = pathlines[l].strip()
+
+    for i in range(len(pathlines)-1):
+        pathlines[i] = list(pathlines[i])
+        if i == 0:
+            for k in range(len(pathlines[i])-1):
+                if pathlines[i][k] == "S":
+                    pathlines[i][k] = "t"
+        else:
+            for j in range(len(pathlines[i])-1):
+                if pathlines[i][j] == "." and pathlines[i-1][j] == "t":
+                    pathlines[i][j] = "t"
+                elif pathlines[i][j] == "^" and pathlines[i-1][j] == "t":
+                    if not j == 0:
+                        pathlines[i][j-1] = "t"
+                    if not j == len(pathlines[i])-1:
+                        pathlines[i][j+1] = "t"
+                    tcount += 1
+
+
+    return(tcount)
 
