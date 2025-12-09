@@ -328,3 +328,11 @@ def d7one():
 
     return(tcount)
 
+def d9one():
+    with open("inputd9.txt") as f:
+        tilines = f.readlines()
+    
+    for i in range(len(tilines)-1):
+        tilines[i] = tilines[i].strip()
+        first, _, second = tilines[i].partition(",")
+        tilines[i] = (first, second)
